@@ -1,0 +1,98 @@
+main.c
+int main(int argc, char *argv[])
+{
+int secim = 0;
+    
+    char filmler[3][30]={
+    	"FROZEN",
+    	"JOKER",
+    	"TITANIC"
+	};
+
+    printf("CinemaBook'a hos geldiniz\n");
+    printf("1- Bilet Al\n");
+    printf("2- Gecmis Rezervasyonlar\n");
+    printf("3- Cikis\n");
+    printf("Seciminizi giriniz: ");
+    scanf("%d", &secim);
+
+    if (secim == 1) {
+    	printf("\N Hangi Filmi Izlemek Istersiniz?\n");
+    	int f=0;
+    	for(f=0; f<3; f++){
+    		printf("%d-%s\n", f+1, filmler[f]);
+		}
+		int filmsecim=0;
+		printf("seciminiz: ");
+		scanf("%d", &filmsecim);
+
+        int sayi = 0;         
+        int i = 0;
+
+        float standart = 100.0f;
+        float vipCarpan = 1.30f;
+        float ogrInd = 0.20f;
+        float cocInd = 0.50f;
+
+        float toplam = 0.0f;
+
+        printf("Kac bilet alacaksiniz?\n");
+        scanf("%d", &sayi);
+
+      
+        int koltukTipi[sayi];      
+        int musteriTipi[sayi];     
+        float biletFiyati[sayi];
+        
+
+        char mustariadi[3][10]=
+        {"Normal","Ogrenci","Cocuk"};
+        
+        for (i = 0; i < sayi; i++) {
+            printf("%d. bilet icin koltuk tipini giriniz (1-Standart 2-VIP)\n", i + 1);
+            scanf("%d", &koltukTipi[i]);
+
+            printf("%d. bilet icin musteri tipini giriniz (1-Normal 2-Ogrenci 3-Cocuk)\n", i + 1);
+            scanf("%d", &musteriTipi[i]);
+
+            biletFiyati[i] = standart;
+
+         if (koltukTipi[i] == 2) {
+                biletFiyati[i] = biletFiyati[i] * vipCarpan;
+    }
+
+         if (musteriTipi[i] == 2) {
+                biletFiyati[i] = biletFiyati[i] * (1 - ogrInd);
+    }
+         else if (musteriTipi[i] == 3) {
+         biletFiyati[i] = biletFiyati[i] * (1 - cocInd);
+    }
+
+         printf("%d. bilet fiyati: %.2f TL\n", i + 1, biletFiyati[i]);
+
+         toplam = toplam + biletFiyati[i];
+    }
+
+     
+        printf("\nSATIS OZETI\n");
+        for (i = 0; i < sayi; i++) {
+            printf("%d. bilet -> Koltuk tipi: %d, Musteri tipi: %d, Fiyat: %.2f TL\n",i + 1, koltukTipi[i],
+			  mustariadi[musteriTipi[i]-1],biletFiyati[i]);
+    }
+
+        printf("\nToplam odeme: %.2f TL\n", toplam);
+        printf("Iyi seyirler!\n");
+    }
+        else if (secim == 2) {
+        printf("Gecmis rezervasyon bulunmamaktadir.\n");
+    }
+        else if (secim == 3) {
+        printf("Cikis yapiliyor...\n");
+    }
+        else {
+        printf("Gecersiz secim yaptiniz.\n");
+    }
+
+
+
+return 0;}
