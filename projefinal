@@ -1,0 +1,173 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+
+  int faktoriyel(int n)
+	{
+    if(n <= 1) return 1;
+    return n * faktoriyel(n-1);
+    }
+
+    float fiyatHesapla(int koltukTipi, int musteriTipi,float standart, float vipCarpan,float ogrInd, float cocInd)
+	{
+    float fiyat = standart;
+    if(koltukTipi == 2)
+        fiyat *= vipCarpan;
+
+    if(musteriTipi == 2)
+        fiyat *= (1 - ogrInd);
+    else if(musteriTipi == 3)
+        fiyat *= (1 - cocInd);
+        
+    return fiyat;
+    }
+
+    void rezervasyonKaydet(const char *dosya,const char *film,int koltukTipi,int musteriTipi,float fiyat,int kod)
+	{
+    FILE *fp = fopen(dosya, "a");
+    if(fp == NULL)
+	{
+        printf("Dosya acilamadi!\n");
+        return;
+    }
+
+    fprintf(fp,
+        "Film:%s | Koltuk:%d | Musteri:%d | Kod:%d | Fiyat:%.2f TL\n",
+        film, koltukTipi, musteriTipi, kod, fiyat);
+    fclose(fp);
+    }
+
+    void gecmisGoster(const char *dosya){
+    FILE *fp = fopen(dosya, "r");
+    if(fp == NULL)
+	{
+        printf("Gecmis rezervasyon bulunmamaktadir.\n");
+        return;
+    }
+
+    char line[300];
+    printf("\n--- GECMIS REZERVASYONLAR ---\n");
+
+    while(fgets(line, sizeof(line), fp) != NULL)
+	{
+        printf("%s", line);
+    }
+
+    fclose(fp);
+    }
+
+/* ===== MAIN ===== */
+    int main()
+	{
+    int secim = 0;
+    char filmler[3][30] = 
+	{
+        "FROZEN",
+        "JOKER",
+        "TITANIC"
+    };
+    
+    char musteriAdi[3][10] = {"Normal","Ogrenci","Cocuk"};
+    char koltukAdi[2][10]  = {"Standart","VIP"};
+
+    const char *dosyaAdi = "rezervasyonlar.txt";
+
+    printf("CinemaBook'a hos geldiniz\n");
+    printf("1- Bilet Al\n");
+    printf("2- Gecmis Rezervasyonlar\n");
+    printf("3- Cikis\n");
+    printf("Seciminizi giriniz: ");
+    scanf("%d", &secim);
+
+    if (secim == 1) {
+
+        printf("\nHangi Filmi Izlemek Istersiniz?\n");
+        int f =0;
+        for( f = 0; f < 3; f++)
+		{
+            printf("%d-%s\n", f+1, filmler[f]);
+        }
+
+        int filmsecim;
+        printf("Seciminiz: ");
+        scanf("%d", &filmsecim);
+
+        if(filmsecim < 1 || filmsecim > 3){
+            printf("Gecersiz film secimi!\n");
+            
+        }
+
+        int sayi;
+        printf("Kac bilet alacaksiniz?\n");
+        scanf("%d", &sayi);
+
+        int koltukTipi[sayi];
+        int musteriTipi[sayi];
+        float biletFiyati[sayi];
+
+        float standart = 100.0f;
+        float vipCarpan = 1.30f;
+        float ogrInd = 0.20f;
+        float cocInd = 0.50f;
+
+        float toplam = 0.0f;
+        int i = 0;
+        for( i = 0; i < sayi; i++)
+		{
+            printf("\n%d. bilet icin koltuk tipi (1-Standart 2-VIP): ", i+1);
+            scanf("%d", &koltukTipi[i]);
+
+            printf("%d. bilet icin musteri tipi (1-Normal 2-Ogrenci 3-Cocuk): ", i+1);
+            scanf("%d", &musteriTipi[i]);
+
+            biletFiyati[i] = fiyatHesapla(
+                koltukTipi[i],
+                musteriTipi[i],
+                standart,
+                vipCarpan,
+                ogrInd,
+                cocInd
+            );
+
+            int kod = filmsecim * 1000 + faktoriyel(i+1);
+
+            printf("%d. bilet fiyati: %.2f TL\n", i+1, biletFiyati[i]);
+
+            toplam += biletFiyati[i];
+
+            rezervasyonKaydet(
+                dosyaAdi,
+                filmler[filmsecim-1],
+                koltukTipi[i],
+                musteriTipi[i],
+                biletFiyati[i],
+                kod
+            );
+        }
+        printf("\nSATIS OZETI\n");
+        int y = 0;
+        for( y = 0; y < sayi; y++)
+		{
+            printf("%d. bilet -> Film:%s, Koltuk:%s, Musteri:%s, Fiyat: %.2f TL\n",
+                y+1,
+                filmler[filmsecim-1],
+                koltukAdi[koltukTipi[y]-1],
+                musteriAdi[musteriTipi[y]-1],
+                biletFiyati[y]
+            );
+        }
+        printf("\nToplam odeme: %.2f TL\n", toplam);
+        printf("Iyi seyirler!\n");
+    }
+    else if (secim == 2){
+        gecmisGoster(dosyaAdi);
+    }
+    else if (secim == 3){
+        printf("Cikis yapiliyor...\n");
+    }
+    else{
+        printf("Gecersiz secim yaptiniz.\n");
+    }
+    return 0;
+} 
